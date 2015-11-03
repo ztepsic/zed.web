@@ -16,23 +16,19 @@ namespace Zed.Web.Test {
         /// <param name="httpMethod">Http method</param>
         /// <returns>Http context mocked http context</returns>
         public static HttpContextBase CreateHttpContext(string targetUrl = null, string httpMethod = "GET") {
-            // create the mock request
-            Mock<HttpRequestBase> mockRequest = new Mock<HttpRequestBase>();
-            mockRequest.Setup(m => m.AppRelativeCurrentExecutionFilePath).Returns(targetUrl);
-            mockRequest.Setup(m => m.HttpMethod).Returns(httpMethod);
+            // create the mock context, using the request and response
+            var mockedHttpContextBuilder = new MockedHttpContextBuilder();
 
-            // create the mock response
-            Mock<HttpResponseBase> mockResponse = new Mock<HttpResponseBase>();
-            mockResponse.Setup(m => m.ApplyAppPathModifier(It.IsAny<string>()))
+            // setup the mock request
+            mockedHttpContextBuilder.RequestMock.Setup(m => m.AppRelativeCurrentExecutionFilePath).Returns(targetUrl);
+            mockedHttpContextBuilder.RequestMock.Setup(m => m.HttpMethod).Returns(httpMethod);
+
+            // setup the mock response
+            mockedHttpContextBuilder.ResponseMock.Setup(m => m.ApplyAppPathModifier(It.IsAny<string>()))
                 .Returns<string>(s => s);
 
-            // create the mock context, using the request and response
-            Mock<HttpContextBase> mockContext = new Mock<HttpContextBase>();
-            mockContext.Setup(m => m.Request).Returns(mockRequest.Object);
-            mockContext.Setup(m => m.Response).Returns(mockResponse.Object);
-
             // return the mocked context
-            return mockContext.Object;
+            return mockedHttpContextBuilder.GetResult();
         }
 
         #endregion
