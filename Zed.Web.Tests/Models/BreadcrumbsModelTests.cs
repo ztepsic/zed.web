@@ -29,26 +29,23 @@ namespace Zed.Web.Tests.Models {
             Assert.IsFalse(breadcrumbsArray[1].IsActive);
 
             Assert.AreEqual("Sports", breadcrumbsArray[2].Title);
-            Assert.IsNullOrEmpty(breadcrumbsArray[2].Url);
+            Assert.That(breadcrumbsArray[2].Url, Is.Null.Or.Empty);
             Assert.IsTrue(breadcrumbsArray[2].IsActive);
         }
 
         
         [Test]
-        [ExpectedException(typeof(InvalidOperationException))]
-        public void Add_TwoAfterAddedActiveBreadcrumb_InvalidOperationExceptionThrown() {
+        public void Add_NewBreadcrumbAfterAddedActiveBreadcrumb_InvalidOperationExceptionThrown() {
             // Arrange
             var breadcrumbsModel = new BreadcrumbsModel();
 
-            // Act
+            // Act and Assert
             breadcrumbsModel.Add("Home", "/")
                 .Add("Categories", "categories")
                 .AddActive("Sports");
 
-            breadcrumbsModel.Add("News", "news");
+            Assert.Throws<InvalidOperationException>(() => breadcrumbsModel.Add("News", "news"));
 
-            // Assert
-            
         }
 
     }

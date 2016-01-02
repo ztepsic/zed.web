@@ -38,7 +38,7 @@ namespace Zed.Web.Tests.Models {
             var keywords = pageInfoModel.GetKeywords().ToHtmlString();
 
             // Assert
-            Assert.IsNotNullOrEmpty(keywords);
+            Assert.That(keywords, Is.Not.Null.Or.Empty);
             Assert.IsTrue(keywords.Contains(keyword01));
             Assert.IsTrue(keywords.Contains(keyword02));
             Assert.IsTrue(keywords.Contains(keyword03));
@@ -56,7 +56,7 @@ namespace Zed.Web.Tests.Models {
             var keywordsResult = pageInfoModel.GetKeywords().ToHtmlString();
 
             // Assert
-            Assert.IsNotNullOrEmpty(keywordsResult);
+            Assert.That(keywordsResult, Is.Not.Null.Or.Empty);
             Assert.AreEqual(keywords, keywordsResult);
         }
 

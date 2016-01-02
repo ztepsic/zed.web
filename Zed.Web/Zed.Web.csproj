@@ -9,7 +9,7 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Zed.Web</RootNamespace>
     <AssemblyName>Zed.Web</AssemblyName>
-    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
@@ -69,8 +69,8 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
-    <Reference Include="Zed, Version=1.1.0.18, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Zed.1.1.0.18\lib\net451\Zed.dll</HintPath>
+    <Reference Include="Zed, Version=1.1.0.23, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Zed.1.1.0.23\lib\net461\Zed.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
