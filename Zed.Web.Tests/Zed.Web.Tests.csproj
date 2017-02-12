@@ -77,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Extensions\ModelStateDictionaryExtensionsTests.cs" />
+    <Compile Include="Extensions\UriBuilderExtensionsTests.cs" />
     <Compile Include="Helpers\HtmlHelperExtensionsTests.cs" />
     <Compile Include="Helpers\HtmlHelperValidationExtensionsTests.cs" />
     <Compile Include="Helpers\UrlHelperExtensionsTests.cs" />
