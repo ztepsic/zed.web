@@ -34,7 +34,7 @@ namespace Zed.Web.Extensions {
 
         /// <summary>
         /// Build URL-encoded query string.
-        // Method appends given params to query the string.
+        /// Method appends given params to query the string.
         /// </summary>
         /// <param name="uriBuilder">UriBuilder</param>
         /// <param name="queryParams">Query params</param>
