@@ -14,5 +14,8 @@
     <releaseNotes>$description$</releaseNotes>
     <copyright>Copyright 2014</copyright>
     <tags>Zed Web</tags>
+    <dependencies>
+      <dependency id="Zed" version="[1.2.2,)" />
+    </dependencies>
   </metadata>
 </package>
