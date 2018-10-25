@@ -1,13 +1,17 @@
-version: 1.1.1.{build}
+environment:
+  version_major: 1
+  version_minor: 1
+  version_patch: 2
+version: $(version_major).$(version_minor).$(version_patch).{build}
 skip_tags: true
-image: Visual Studio 2015
+image: Visual Studio 2017
 configuration: Release
 assembly_info:
   patch: true
   file: '**\AssemblyInfo.*'
-  assembly_version: '{version}'
+  assembly_version: '$(version_major).0.0.0'
   assembly_file_version: '{version}'
-  assembly_informational_version: '{version}'
+  assembly_informational_version: '$(version_major).$(version_minor).$(version_patch)'
 before_build:
 - cmd: nuget restore
 build:
@@ -18,9 +22,9 @@ after_build:
 
     Zed.Web.Test_build_nuget.bat
 artifacts:
-- path: Zed.Web.$(APPVEYOR_BUILD_VERSION).nupkg
-  name: Zed.Web.$(APPVEYOR_BUILD_VERSION).nupkg
+- path: Zed.Web.$(version_major).$(version_minor).$(version_patch).nupkg
+  name: Zed.Web.$(version_major).$(version_minor).$(version_patch).nupkg
 - path: packages
-  name: Zed.Web.Packages.$(APPVEYOR_BUILD_VERSION)
-- path: Zed.Web.Test.$(APPVEYOR_BUILD_VERSION).nupkg
-  name: Zed.Web.Test.$(APPVEYOR_BUILD_VERSION).nupkg
+  name: Zed.Web.Packages.$(version_major).$(version_minor).$(version_patch)
+- path: Zed.Web.Test.$(version_major).$(version_minor).$(version_patch).nupkg
+  name: Zed.Web.Test.$(version_major).$(version_minor).$(version_patch).nupkg
