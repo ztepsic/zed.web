@@ -1,0 +1,110 @@
+# yaml-language-server: $schema=https://json.schemastore.org/github-action.json
+
+name: Mutation Test
+description: Run Stryker.NET mutation testing for branch changes
+
+inputs:
+  dotnet-version:
+    description: "The .NET SDK version"
+    default: "10.x"
+  mutation-threshold:
+    description: "Minimum mutation score required for success"
+    default: "80"
+  non-failing-branches:
+    description: "Comma-separated branch names that should not fail the pipeline on mutation score"
+    default: "master,main,develop"
+  since-target:
+    description: "Optional branch or commit to compare mutations against; defaults to workflow-derived target"
+    default: ""
+  working-directory:
+    description: "Directory from which Stryker should run"
+    default: "."
+  output-dir:
+    description: "Directory for Stryker output"
+    default: "StrykerOutput"
+  artifact-name:
+    description: "Artifact name for uploaded mutation reports"
+    default: "mutation-report"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v5
+      with:
+        dotnet-version: ${{inputs.dotnet-version}}
+
+    - name: Restore dependencies
+      run: dotnet restore --locked-mode
+      shell: bash
+
+    - name: Restore local tools
+      run: dotnet tool restore
+      shell: bash
+
+    - name: Determine mutation diff target
+      id: mutation-target
+      shell: bash
+      run: |
+        if [[ -n "${{ inputs.since-target }}" ]]; then
+          target="${{ inputs.since-target }}"
+        elif [[ "${{ github.event_name }}" == "pull_request" ]]; then
+          target="${{ github.base_ref }}"
+        elif [[ "${{ github.ref_name }}" != "${{ github.event.repository.default_branch }}" ]]; then
+          target="${{ github.event.repository.default_branch }}"
+        elif [[ -n "${{ github.event.before }}" && "${{ github.event.before }}" != "0000000000000000000000000000000000000000" ]]; then
+          target="${{ github.event.before }}"
+        else
+          target="$(git rev-parse HEAD^ 2>/dev/null || echo '${{ github.event.repository.default_branch }}')"
+        fi
+
+        echo "target=$target" >> "$GITHUB_OUTPUT"
+        echo "Using mutation diff target: $target"
+
+    - name: Determine mutation threshold behavior
+      id: mutation-threshold
+      shell: bash
+      run: |
+        branch="${{ github.head_ref }}"
+
+        if [[ -z "$branch" ]]; then
+          branch="${{ github.ref_name }}"
+        fi
+
+        breakAt="${{ inputs.mutation-threshold }}"
+        IFS=',' read -r -a nonFailingBranches <<< "${{ inputs.non-failing-branches }}"
+
+        for candidate in "${nonFailingBranches[@]}"; do
+          candidate="${candidate//[[:space:]]/}"
+
+          if [[ -n "$candidate" && "$branch" == "$candidate" ]]; then
+            breakAt="0"
+            break
+          fi
+        done
+
+        echo "branch=$branch" >> "$GITHUB_OUTPUT"
+        echo "break-at=$breakAt" >> "$GITHUB_OUTPUT"
+        echo "Using branch '$branch' with mutation break threshold $breakAt"
+
+    - name: Run mutation tests
+      working-directory: ${{inputs.working-directory}}
+      shell: bash
+      run: |
+        dotnet tool run dotnet-stryker -- \
+          --configuration Release \
+          --since:${{ steps.mutation-target.outputs.target }} \
+          --break-at ${{ steps.mutation-threshold.outputs.break-at }} \
+          --threshold-low ${{inputs.mutation-threshold}} \
+          --threshold-high ${{inputs.mutation-threshold}} \
+          --reporter json \
+          --reporter html \
+          --reporter progress \
+          --output "${{ github.workspace }}/${{inputs.output-dir}}"
+
+    - name: Upload mutation report
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{inputs.artifact-name}}
+        path: ${{inputs.output-dir}}/reports
+      if: ${{always()}}
