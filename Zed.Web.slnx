@@ -1,0 +1,10 @@
+<Solution>
+ <Folder Name="/Solution Items/">
+    <File Path="appveyor.yml" />
+    <File Path="Directory.Build.props" />
+    <File Path="Directory.Packages.props" />
+    <File Path="NuGet.Config" />
+  </Folder>
+ <Project Path="Zed.Web.Tests/Zed.Web.Tests.csproj" Id="38229f17-8518-41bd-9f45-c702c6bb647b" />
+ <Project Path="Zed.Web/Zed.Web.csproj" />
+</Solution>
